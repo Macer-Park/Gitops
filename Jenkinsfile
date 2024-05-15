@@ -1,10 +1,23 @@
 pipeline {
   agent any
   stages {
+<<<<<<< HEAD
     stage('git pull') {
       steps {
         // https://github.com/Macer-Park/Gitops will replace by sed command before RUN
         git url: 'https://github.com/Macer-Park/Gitops', branch: 'main'
+=======
+    stage('Deploy start') {
+      steps {
+        slackSend(message: "Deploy ${env.BUILD_NUMBER} Started"
+        , color: 'good', tokenCredentialId: 'slack-key')
+      }
+    }      
+    stage('git pull') {
+      steps {
+        // https://github.com/Macer-Park/Gitops.git will replace by sed command before RUN
+        git url: 'https://github.com/Macer-Park/Gitops.git', branch: 'main'
+>>>>>>> edde94febabf8407b8dbcc12beb08fcbd60378d1
       }
     }
     stage('k8s deploy'){
@@ -12,6 +25,23 @@ pipeline {
         kubernetesDeploy(kubeconfigId: 'kubeconfig',
                          configs: '*.yaml')
       }
+<<<<<<< HEAD
     }    
+=======
+    }
+    stage('send diff') {
+      steps {
+        script {
+          def publisher = LastChanges.getLastChangesPublisher "PREVIOUS_REVISION", "SIDE", "LINE", true, true, "", "", "", "", ""
+          publisher.publishLastChanges()
+          def htmlDiff = publisher.getHtmlDiff()
+          writeFile file: "deploy-diff-${env.BUILD_NUMBER}.html", text: htmlDiff
+        }
+        slackSend(message: """${env.JOB_NAME} #${env.BUILD_NUMBER} End
+        (<${env.BUILD_URL}/last-changes|Check Last changed>)"""
+        , color: 'good', tokenCredentialId: 'slack-key')             
+      }
+    }
+>>>>>>> edde94febabf8407b8dbcc12beb08fcbd60378d1
   }
 }
