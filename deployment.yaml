@@ -5,7 +5,11 @@ metadata:
     app: gitops-nginx
   name: gitops-nginx
 spec:
+<<<<<<< HEAD
   replicas: 2
+=======
+  replicas: 5
+>>>>>>> f1dd8db0cccdedd55ece010f950f710ae99cd629
   selector:
     matchLabels:
       app: gitops-nginx
